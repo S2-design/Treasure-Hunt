@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QR Scanner</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="page center">
+  <div class="card narrow">
+    <h2>QR Scanner</h2>
+    <p class="muted">Allow camera access and point your camera at the printed QR code (QR1 ... QR6).</p>
+
+    <div id="scannerArea" style="display:flex;justify-content:center;align-items:center;">
+      <video id="video" playsinline style="width:100%;max-width:420px;border-radius:12px;"></video>
+      <canvas id="canvas" hidden></canvas>
+    </div>
+
+    <div class="actions" style="margin-top:14px;">
+      <button class="btn" id="startCam">Start Camera</button>
+      <input id="fileInput" type="file" accept="image/*" />
+      <a class="btn" id="closeBtn" href="#">Close</a>
+    </div>
+
+    <p id="scanResult" class="muted" style="margin-top:12px;"></p>
+  </div>
+</main>
+
+<!-- jsQR library -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+<script src="script.js"></script>
+
+<script>
+(function(){
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const fileInput = document.getElementById('fileInput');
+  const scanResult = document.getElementById('scanResult');
+  const startBtn = document.getElementById('startCam');
+
+  let localStream = null;
+  let scanning = false;
+
+  function stopStream(){
+    try{ if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream=null; } }catch(e){}
+  }
+
+  function parseQRText(txt){
+    // Accepts "QR1", "qr1", " qR1 " etc.
+    if(!txt) return null;
+    const m = txt.trim().toUpperCase().match(/^QR\s*([1-6])$/) || txt.trim().toUpperCase().match(/^QR([1-6])$/);
+    if(m) return parseInt(m[1],10);
+    return null;
+  }
+
+  async function startCamera(){
+    try{
+      localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }});
+      video.srcObject = localStream;
+      await video.play();
+      scanning = true;
+      scanLoop();
+    }catch(err){
+      scanResult.textContent = 'Camera access denied or unavailable: ' + (err && err.message ? err.message : err);
+    }
+  }
+
+  function scanLoop(){
+    if(!scanning) return;
+    if(video.readyState !== video.HAVE_ENOUGH_DATA){ requestAnimationFrame(scanLoop); return; }
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video,0,0,canvas.width,canvas.height);
+    const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if(code && code.data){
+      scanning = false;
+      stopStream();
+      handleScanned(code.data);
+      return;
+    }
+    requestAnimationFrame(scanLoop);
+  }
+
+  function handleScanned(text){
+    scanResult.textContent = 'Scanned: ' + text;
+    const qn = parseQRText(text);
+    if(!qn){
+      alert('QR content not recognized. Make sure QR contains plain text like QR1, QR2, ... QR6.');
+      return;
+    }
+
+    // Validate against team sequence & progress
+    try{
+      const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+      let idx = parseInt(localStorage.getItem('progressIndex') || '0', 10);
+      if(!Array.isArray(seq) || seq.length !== 6){
+        alert('Team sequence missing. Please login first.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const expected = seq[idx]; // the question they are supposed to solve now
+      if(qn !== expected){
+        alert('Wrong QR — this location is not unlocked yet for your team. Your current clue is Q' + expected + '.');
+        return;
+      }
+
+      // correct scan: advance progress
+      idx = idx + 1;
+      localStorage.setItem('progressIndex', idx.toString());
+
+      // if finished all questions, record finalTime
+      if(idx >= seq.length){
+        const start = parseInt(localStorage.getItem('startTime') || '0', 10);
+        if(start) localStorage.setItem('finalTime', (Date.now() - start).toString());
+        // redirect to thankyou
+        window.location.href = 'thankyou.html';
+        return;
+      }
+
+      // otherwise redirect to the next question page
+      const nextQ = seq[idx];
+      window.location.href = 'q' + nextQ + '.html';
+    }catch(e){
+      console.error(e);
+      alert('Error validating QR. Contact organiser.');
+    }
+  }
+
+  // file upload fallback
+  fileInput.addEventListener('change', function(){
+    const f = fileInput.files[0]; if(!f) return;
+    const reader = new FileReader();
+    reader.onload = function(){
+      const img = new Image();
+      img.onload = function(){
+        canvas.width = img.width; canvas.height = img.height;
+        const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0);
+        const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if(code && code.data) handleScanned(code.data);
+        else scanResult.textContent = 'No QR detected in image.';
+      }; img.src = reader.result;
+    };
+    reader.readAsDataURL(f);
+  });
+
+  startBtn.addEventListener('click', startCamera);
+
+  // Close button: go back to ?from= param or current expected q
+  document.getElementById('closeBtn').addEventListener('click', function(ev){
+    ev.preventDefault();
+    stopStream();
+    const params = new URLSearchParams(window.location.search);
+    const from = params.get('from') || '';
+    if(from && /^q[1-6]$/i.test(from)){
+      window.location.href = from + '.html';
+      return;
+    }
+    const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+    const idx = parseInt(localStorage.getItem('progressIndex') || '0', 10);
+    if(Array.isArray(seq) && seq.length && idx < seq.length){
+      window.location.href = 'q' + seq[idx] + '.html';
+    } else {
+      window.location.href = 'home.html';
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

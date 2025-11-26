@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XISS Treasure Hunt — Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+    <img src="logo.png" alt="College Logo" class="college-logo" />
+    <h1 class="money-heist-title">
+      <span>M</span><span>O</span><span>N</span><span>E</span><span>Y</span> 
+      <span>H</span><span>E</span><span>I</span><span>S</span><span>T</span>
+    </h1>
+  </header>
+<main class="page center">
+  <div class="card">
+    <h1> Team Login</h1>
+    <p class="lead">Enter your team details. If you have a team number (1–6) enter it to receive the predefined sequence.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+      <input id="teamName" type="text" placeholder="Team name (required)" />
+      <input id="teamNumber" type="number" placeholder="Team number (1-6, optional)" min="1" max="999" />
+    </div>
+
+    <div class="actions" style="margin-top:14px;">
+      <button class="btn primary" id="loginBtn">Save & Continue →</button>
+      <a class="btn" href="rules.html">Rules & Instructions</a>
+    </div>
+
+    <small class="muted" style="display:block;margin-top:12px;">Players: 50 • Questions: 6</small>
+  </div>
+</main>
+
+<script>
+(() => {
+  // Predefined sequences for teams 1..6 (your chosen sequences)
+  const PRESET = {
+    1: [1,4,6,2,5,3],
+    2: [2,6,3,5,1,4],
+    3: [3,1,5,4,6,2],
+    4: [4,5,2,6,3,1],
+    5: [5,3,1,2,4,6],
+    6: [6,2,4,3,1,5]
+  };
+
+  function chooseSequenceFromName(name) {
+    // deterministic assignment for teams without number
+    const s = (name || 'X').split('').reduce((a,c)=>a + c.charCodeAt(0),0);
+    const k = (s % 6) + 1;
+    return PRESET[k];
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', function(){
+    const name = (document.getElementById('teamName').value || '').trim();
+    const numStr = (document.getElementById('teamNumber').value || '').trim();
+
+    if(!name){
+      alert('Please enter a team name.');
+      return;
+    }
+
+    localStorage.setItem('teamName', name);
+    if(numStr) localStorage.setItem('teamNumber', numStr);
+
+    let seq = null;
+    const num = parseInt(numStr, 10);
+    if(!isNaN(num) && num >=1 && num <=6){
+      seq = PRESET[num];
+    } else {
+      seq = chooseSequenceFromName(name);
+    }
+
+    localStorage.setItem('teamSeq', JSON.stringify(seq));
+    localStorage.setItem('progressIndex', '0'); // 0-based
+    localStorage.removeItem('startTime');
+    localStorage.removeItem('finalTime');
+
+    // go to the post-login landing page
+    window.location.href = 'home.html';
+  });
+})();
+</script>
+</body>
+</html>

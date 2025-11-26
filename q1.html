@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Question 1 - XISS Treasure Hunt</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="home.html">XISS Treasure Hunt</a>
+  <div class="status">Question 1 / 6 • <span id="timer">--:--</span></div>
+</header>
+
+<main class="page">
+  <div class="card">
+    <h2>Question 1</h2>
+    <p class="riddle">
+      People come empty,<br>
+      leave full.<br>
+      No fees, no roll call—<br>
+      yet everyone attends.<br>
+      Find me.
+    </p>
+
+    <div class="actions">
+      <a class="btn" id="openScanner" href="Scanner.html">Open QR Scanner</a>
+    </div>
+
+    <p class="muted">Tip: Teamwork helps. Scan only the QR at the location mentioned by the riddle.</p>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+(function(){
+  const THIS_Q = 1;
+  const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+  const idx = parseInt(localStorage.getItem('progressIndex') || '0', 10);
+
+  if(!Array.isArray(seq) || seq.length !== 6){
+    // not logged-in
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // If the current page is not the team's expected question, send them to their actual one
+  if(seq[idx] !== THIS_Q){
+    alert('This question is locked for your team. Redirecting to your current active question.');
+    window.location.href = 'q' + seq[idx] + '.html';
+    return;
+  }
+
+  // scanner button already links to scanner.html?from=q1
+})();
+</script>
+</body>
+</html>

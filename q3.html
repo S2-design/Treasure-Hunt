@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Question 3</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="topbar"><a class="logo" href="home.html">XISS Treasure Hunt</a><div class="status">Question 3 / 6 • <span id="timer">--:--</span></div></header>
+<main class="page"><div class="card">
+  <h2>Question 3</h2>
+  <p class="riddle">No net for volleyball, no hoop for a shot,<br>But a small white ball decides the lot.</p>
+  <div class="actions"><a class="btn" id="openScanner" href="Scanner.html?from=q3">Open QR Scanner</a></div>
+  <p class="muted">Hint...</p>
+</div></main>
+
+<script src="script.js"></script>
+<script>
+(function(){
+  const THIS_Q = 3;
+  const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+  const idx = parseInt(localStorage.getItem('progressIndex') || '0', 10);
+  if(!Array.isArray(seq) || seq.length !== 6){ window.location.href='index.html'; return; }
+  if(seq[idx] !== THIS_Q){ alert('This question is locked. Redirecting...'); window.location.href = 'q' + seq[idx] + '.html'; return; }
+})();
+</script>
+</body>
+</html>

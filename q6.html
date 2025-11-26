@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Question 6</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="topbar"><a class="logo" href="home.html">XISS Treasure Hunt</a><div class="status">Question 6 / 6 • <span id="timer">--:--</span></div></header>
+<main class="page"><div class="card">
+  <h2>Question 6</h2>
+  <p class="riddle">Shoes gather here before they go in,<br>Ready for jumping, training, and spin.<br>Search the stand where sneakers stay,<br>Your clue is tucked not far away.</p>
+
+  <div class="actions">
+    <a class="btn" id="openScanner" href="scanner.html?from=q6">Open QR Scanner</a>
+    <a class="btn primary" id="finishBtn" href="thankyou.html">Finish Hunt</a>
+  </div>
+</div></main>
+
+<script src="script.js"></script>
+<script>
+(function(){
+  const THIS_Q = 6;
+  const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+  const idx = parseInt(localStorage.getItem('progressIndex') || '0', 10);
+  if(!Array.isArray(seq) || seq.length !== 6){ window.location.href='index.html'; return; }
+  if(seq[idx] !== THIS_Q){ alert('This question is locked. Redirecting...'); window.location.href = 'q' + seq[idx] + '.html'; return; }
+
+  // Finish button: compute final time if not already saved
+  document.getElementById('finishBtn').addEventListener('click', function(){
+    const start = parseInt(localStorage.getItem('startTime') || '0', 10);
+    if(start){
+      localStorage.setItem('finalTime', (Date.now() - start).toString());
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
