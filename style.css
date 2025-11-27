@@ -140,7 +140,7 @@ h1,h2{margin:0 0 12px 0}
 
 .btn.primary {
   background: linear-gradient(90deg,#ff4444,#ff7777);
-  min-width: 140px;
+   max-width: 140px;
   color: white;
   box-shadow: 0 8px 20px rgba(255,68,68,0.35);
 }
@@ -176,4 +176,5 @@ input[type="password"] {
   font-size: 1.15rem;
   line-height: 1.6;
 }
+
 
