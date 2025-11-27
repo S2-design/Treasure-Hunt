@@ -87,7 +87,7 @@
     scanResult.textContent = 'Scanned: ' + text;
     const qn = parseQRText(text);
     if(!qn){
-      alert('QR content not recognized. Make sure QR contains plain text like QR1, QR2, ... QR6.');
+      alert('QR content not recognized. Scan the correct QR.');
       return;
     }
 
@@ -103,7 +103,7 @@
 
       const expected = seq[idx]; // the question they are supposed to solve now
       if(qn !== expected){
-        alert('Wrong QR — this location is not unlocked yet for your team. Your current clue is Q' + expected + '.');
+        alert('Wrong QR — this location is not unlocked yet for your team.);
         return;
       }
 
@@ -172,3 +172,4 @@
 </script>
 </body>
 </html>
+
