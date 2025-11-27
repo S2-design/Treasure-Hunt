@@ -84,7 +84,7 @@
   }
 
   function handleScanned(text){
-    scanResult.textContent = 'Scanned: ' + text;
+    scanResult.textContent = 'Scanned! ' 
     const qn = parseQRText(text);
     if(!qn){
       alert('QR content not recognized. Scan the correct QR.');
@@ -172,5 +172,6 @@
 </script>
 </body>
 </html>
+
 
 
