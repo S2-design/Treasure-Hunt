@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>XISS Treasure Hunt — Login</title>
+<title>XISS Money Heist — Login</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
 
     <h1 class="money-heist-title">
-      <span>M</span><span>O</span><span>N</span><span>E</span><span>Y</span> 
+      <span>M</span><span>O</span><span>N</span><span>E</span><span>Y</span>&nbsp
       <span>H</span><span>E</span><span>I</span><span>S</span><span>T</span>
     </h1>
   </header>
 <main class="page center">
   <div class="card">
     <h1> Team Login</h1>
-    <p class="lead">Enter your team details. If you have a team number (1–6) enter it to receive the predefined sequence.</p>
+    <p class="lead">Enter your team name.</p>
 
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
       <input id="teamName" type="text" placeholder="Team name (required)" />
-      <input id="teamNumber" type="number" placeholder="Team number (1-6, optional)" min="1" max="999" />
+
     </div>
 
     <div class="actions" style="margin-top:14px;">
@@ -29,7 +29,7 @@
       <a class="btn" href="rules.html">Rules & Instructions</a>
     </div>
 
-    <small class="muted" style="display:block;margin-top:12px;">Players: 50 • Questions: 6</small>
+    <small class="muted" style="display:block;margin-top:12px;">Total Questions- 6</small>
   </div>
 </main>
 
@@ -54,7 +54,7 @@
 
   document.getElementById('loginBtn').addEventListener('click', function(){
     const name = (document.getElementById('teamName').value || '').trim();
-    const numStr = (document.getElementById('teamNumber').value || '').trim();
+  //  const numStr = (document.getElementById('teamNumber').value || '').trim();
 
     if(!name){
       alert('Please enter a team name.');
@@ -84,4 +84,5 @@
 </script>
 </body>
 </html>
+
 
