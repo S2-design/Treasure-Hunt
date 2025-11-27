@@ -14,7 +14,7 @@
     <p class="lead">Welcome! Team <strong id="teamNameDisplay">Team</strong> get ready for your hunt.</p>
 
     <div class="meta">
-      <div id="teamNumberDisplay"></div>
+     
       <div>Questions: 6</div>
     </div>
 
@@ -39,7 +39,6 @@
   }
 
   document.getElementById('teamNameDisplay').textContent = name;
-  document.getElementById('teamNumberDisplay').textContent = num ? ('Team number: ' + num) : '';
 
   document.getElementById('startHunt').addEventListener('click', function(){
     // set startTime (if not already)
@@ -60,5 +59,6 @@
 </script>
 </body>
 </html>
+
 
 
