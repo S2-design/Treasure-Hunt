@@ -12,6 +12,9 @@
     <h1>🎉 Congratulations!</h1>
     <p class="lead">Team: <strong id="teamNameShow">Team</strong></p>
 
+    <p>Your sequence:</p>
+    <p id="teamSequence" class="muted"></p>
+
     <p class="lead">Time taken: <strong id="teamTime">--:--</strong></p>
 
     <div class="actions">
@@ -23,27 +26,27 @@
   </div>
 </main>
 
+<script src="script.js"></script>
 <script>
 (function(){
   const name = localStorage.getItem('teamName') || 'Team';
-  const start = parseInt(localStorage.getItem('startTime') || '0', 10);
-  const end = parseInt(localStorage.getItem('finalTime') || '0', 10);
+  const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
+  const finalMs = parseInt(localStorage.getItem('finalTime') || '0', 10);
 
   document.getElementById('teamNameShow').textContent = name;
+  document.getElementById('teamSequence').textContent = Array.isArray(seq) ? seq.join(' → ') : '—';
 
-  // Calculate time properly
-  if(start && end && end > start){
-    const diff = end - start; // milliseconds
-    const totalSec = Math.floor(diff / 1000);
-    const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
-    const ss = String(totalSec % 60).padStart(2, '0');
+  if(finalMs){
+    const mm = String(Math.floor(finalMs/60000)).padStart(2,'0');
+    const ss = String(Math.floor((finalMs%60000)/1000)).padStart(2,'0');
     document.getElementById('teamTime').textContent = mm + ':' + ss;
   } else {
     document.getElementById('teamTime').textContent = '--:--';
   }
 
-  // Logout & reset
+  // doneBtn: clear session (keeps history if you want)
   document.getElementById('doneBtn').addEventListener('click', function(){
+    // optionally clear team data to prevent accidental reuse
     localStorage.removeItem('teamName');
     localStorage.removeItem('teamNumber');
     localStorage.removeItem('teamSeq');
@@ -54,6 +57,5 @@
   });
 })();
 </script>
-
 </body>
 </html>
