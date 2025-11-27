@@ -112,13 +112,14 @@
       localStorage.setItem('progressIndex', idx.toString());
 
       // if finished all questions, record finalTime
-      if(idx >= seq.length){
-        const start = parseInt(localStorage.getItem('startTime') || '0', 10);
-        if(start) localStorage.setItem('finalTime', (Date.now() - start).toString());
-        // redirect to thankyou
-        window.location.href = 'thankyou.html';
-        return;
+      if (idx >= seq.length) {
+      localStorage.setItem('finalTime', Date.now().toString());
+      window.location.href = 'thankyou.html';
+      return;
       }
+
+
+ 
 
       // otherwise redirect to the next question page
       const nextQ = seq[idx];
@@ -172,6 +173,7 @@
 </script>
 </body>
 </html>
+
 
 
 
