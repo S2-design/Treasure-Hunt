@@ -150,7 +150,7 @@ h1,h2{margin:0 0 12px 0}
 }
 
 /* Fix overflow of second button on mobile */
-@media(max-width:500px){
+@media(max-width:600px){
   .actions {
     flex-direction: column;
   }
@@ -176,6 +176,7 @@ input[type="password"] {
   font-size: 1.15rem;
   line-height: 1.6;
 }
+
 
 
 
