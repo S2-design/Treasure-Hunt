@@ -1,61 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Thank You — XISS Treasure Hunt</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heist Completed!</title>
 <link rel="stylesheet" href="style.css">
+<style>
+/* Page background & card */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial;
+  background: url('bg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  animation: fadeIn 0.7s ease-in-out;
+}
+.page { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  min-height: 100vh; 
+  padding: 20px;
+}
+.card {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(0,0,0,0.55);
+  padding: 30px;
+  border-radius: 14px;
+  backdrop-filter: blur(7px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Title */
+.heist-title {
+  position: relative;
+  font-size: 44px;
+  font-weight: 900;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 3px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255,0,0,0.7), 0 0 20px rgba(255,0,0,0.4);
+  animation: titleFadeIn 1s ease-out forwards;
+}
+
+/* Red smoke behind title */
+.heist-title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,0,0,0.35) 0%, rgba(120,0,0,0.25) 40%, rgba(0,0,0,0) 70%);
+  filter: blur(18px);
+  opacity: 0.8;
+  z-index: -1;
+  animation: smokeRise 4s ease-in-out infinite;
+}
+
+@keyframes smokeRise {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.55; }
+  50% { transform: translate(-50%, -60%) scale(1.25); opacity: 0.75; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.55; }
+}
+
+@keyframes titleFadeIn {
+  0% { opacity: 0; transform: translateY(-20px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
+/* Lead text */
+.lead {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+/* Time display */
+.time-taken {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ff4444;
+  margin-bottom: 24px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px rgba(255,68,68,0.5); }
+  50% { text-shadow: 0 0 25px rgba(255,68,68,0.8); }
+  100% { text-shadow: 0 0 10px rgba(255,68,68,0.5); }
+}
+
+/* Button */
+.btn.primary {
+  background: linear-gradient(90deg,#ff4444,#ff7777);
+  color: white;
+  box-shadow: 0 8px 20px rgba(255,68,68,0.35);
+  padding: 12px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+.btn.primary:hover { transform: translateY(-3px); }
+</style>
 </head>
 <body>
 <main class="page center">
-  <div class="card narrow">
-    <h1>🎉 Congratulations!</h1>
-    <p class="lead">Team: <strong id="teamNameShow">Team</strong></p>
-
-    <p>Your sequence:</p>
-    <p id="teamSequence" class="muted"></p>
-
-    <p class="lead">Time taken: <strong id="teamTime">--:--</strong></p>
-
-    <div class="actions">
-      <a class="btn" href="home.html">Back to Home</a>
-      <a class="btn primary" id="doneBtn" href="index.html">Finish & Logout</a>
-    </div>
-
-    <small class="muted">Show this screen to the organiser for verification.</small>
+  <div class="card">
+    <h1 class="heist-title">HEIST COMPLETED!</h1>
+    <p class="lead">Congratulations, <strong id="teamNameDisplay">Team</strong>! You finished the hunt.</p>
+    <p class="time-taken" id="timeTaken">Time Taken: --:--</p>
+    <a href="index.html" class="btn primary">Back to Home</a>
   </div>
 </main>
 
-<script src="script.js"></script>
 <script>
-(function(){
+(() => {
   const name = localStorage.getItem('teamName') || 'Team';
-  const seq = JSON.parse(localStorage.getItem('teamSeq') || '[]');
-  const finalMs = parseInt(localStorage.getItem('finalTime') || '0', 10);
+  const startTime = parseInt(localStorage.getItem('startTime') || '0', 10);
+  const finalTime = parseInt(localStorage.getItem('finalTime') || '0', 10);
 
-  document.getElementById('teamNameShow').textContent = name;
-  document.getElementById('teamSequence').textContent = Array.isArray(seq) ? seq.join(' → ') : '—';
+  document.getElementById('teamNameDisplay').textContent = name;
 
-  if(finalMs){
-    const mm = String(Math.floor(finalMs/60000)).padStart(2,'0');
-    const ss = String(Math.floor((finalMs%60000)/1000)).padStart(2,'0');
-    document.getElementById('teamTime').textContent = mm + ':' + ss;
+  if(startTime && finalTime && finalTime > startTime){
+    const duration = finalTime - startTime;
+    const minutes = Math.floor(duration / 60000);
+    const seconds = Math.floor((duration % 60000) / 1000);
+    document.getElementById('timeTaken').textContent = 
+      `Time Taken: ${minutes} min ${seconds} sec`;
   } else {
-    document.getElementById('teamTime').textContent = '--:--';
+    document.getElementById('timeTaken').textContent = 'Time Taken: N/A';
   }
-
-  // doneBtn: clear session (keeps history if you want)
-  document.getElementById('doneBtn').addEventListener('click', function(){
-    // optionally clear team data to prevent accidental reuse
-    localStorage.removeItem('teamName');
-    localStorage.removeItem('teamNumber');
-    localStorage.removeItem('teamSeq');
-    localStorage.removeItem('progressIndex');
-    localStorage.removeItem('startTime');
-    localStorage.removeItem('finalTime');
-    window.location.href = 'index.html';
-  });
 })();
 </script>
 </body>
 </html>
+
