@@ -7,13 +7,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
 
-    <h1 class="money-heist-title">
-      <span>M</span><span>O</span><span>N</span><span>E</span><span>Y</span>&nbsp
-      <span>H</span><span>E</span><span>I</span><span>S</span><span>T</span>
-    </h1>
-  </header>
+<header class="topbar">
+  <h1 class="money-heist-title">
+    <span>M</span><span>O</span><span>N</span><span>E</span><span>Y</span>&nbsp;
+    <span>H</span><span>E</span><span>I</span><span>S</span><span>T</span>
+  </h1>
+</header>
+
 <main class="page center">
   <div class="card">
     <h1> Team Login</h1>
@@ -21,15 +22,14 @@
 
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
       <input id="teamName" type="text" placeholder="Team name (required)" />
-
     </div>
 
     <div class="actions" style="margin-top:14px;">
-      <button class="btn primary" id="loginBtn">Save & Continue </button>
+      <button class="btn primary" id="loginBtn">Save & Continue</button>
       <a class="btn" href="rules.html">Rules & Instructions</a>
     </div>
 
-    <small class="muted" style="display:block;margin-top:12px;">Total Questions- 6</small>
+    <small class="muted" style="display:block;margin-top:12px;">Total Questions - 6</small>
   </div>
 </main>
 
@@ -45,36 +45,39 @@
   };
 
   function chooseSequenceFromName(name) {
-    const s = (name || 'X').split('').reduce((a,c)=>a + c.charCodeAt(0), 0);
+    const s = (name || 'X')
+      .split('')
+      .reduce((a, c) => a + c.charCodeAt(0), 0);
+
     const k = (s % 6) + 1;
     return PRESET[k];
   }
 
-  document.getElementById('loginBtn').addEventListener('click', function(){
-    const name = (document.getElementById('teamName').value || '').trim();
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const name = (document.getElementById("teamName").value || "").trim();
 
     if (!name) {
-      alert('Please enter a team name.');
+      alert("Please enter a team name.");
       return;
     }
 
-    localStorage.setItem('teamName', name);
+    localStorage.setItem("teamName", name);
 
-    // Always assign sequence using team name only
+    // ALWAYS assign question sequence from team name
     const seq = chooseSequenceFromName(name);
 
-    localStorage.setItem('teamSeq', JSON.stringify(seq));
-    localStorage.setItem('progressIndex', '0');
-    localStorage.removeItem('startTime');
-    localStorage.removeItem('finalTime');
+    localStorage.setItem("teamSeq", JSON.stringify(seq));
+    localStorage.setItem("progressIndex", "0");
+    localStorage.removeItem("startTime");
+    localStorage.removeItem("finalTime");
 
-    window.location.href = 'home.html';
+    window.location.href = "home.html";
   });
 })();
 </script>
+
 </body>
 </html>
-
 
 
 
